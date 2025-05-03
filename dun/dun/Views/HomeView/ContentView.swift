@@ -10,77 +10,133 @@ import CoreData
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
-
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
-        animation: .default)
-    private var items: FetchedResults<Item>
-
+    
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
-                    }
-                }
-                .onDelete(perform: deleteItems)
+        VStack(spacing: 25) {
+            createHeader(title: TodoStrings.weatherTitle)
+                .padding(.vertical, 0)
+                .frame(width: 325, height: 50, alignment: .leading)
+            makeWeatherCard()
+            
+            ScrollView(.vertical) {
+                createHeader(title: TodoStrings.todoListTitle)
+                    .padding(.vertical, 5)
+                    .frame(width: 325, height: 50, alignment: .leading)
+                
+                makeTodoListCard(item: ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                                todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                                isCompleted: false))
+                makeTodoListCard(item: ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                                todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                                isCompleted: false))
+                makeTodoListCard(item: ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                                todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                                isCompleted: false))
+                makeTodoListCard(item: ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                                todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                                isCompleted: false))
+                
+                createHeader(title: TodoStrings.completedListTitle)
+                    .padding(.vertical, 5)
+                    .frame(width: 325, height: 50, alignment: .leading)
+                
+                makeTodoListCard(item: ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                                todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                                isCompleted: true))
+                makeTodoListCard(item: ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                                todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                                isCompleted: true))
+                makeTodoListCard(item: ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                                todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                                isCompleted: true))
+                makeTodoListCard(item: ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                                todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                                isCompleted: true))
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-            Text("Select an item")
+            .padding(.top, 10)
         }
     }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
+    
+    private func createHeader(title: String) -> some View {
+        HStack {
+            Text(title)
+                .font(.custom(TodoStrings.sfProRounded,
+                              size: 20))
         }
     }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
+    
+    private func makeWeatherCard() -> some View {
+        HStack(spacing: 10) {
+            Image("03d")
+                .resizable()
+                .frame(width: 80, height: 80)
+                .padding(.leading, 30)
+            weatherText()
+                .padding(.horizontal, 18)
+                .padding(.trailing, 18)
         }
+        .background(.white)
+        .clipShape(RoundedRectangle(cornerRadius: 24.0))
+        .shadow(radius: 8)
+        .frame(width: 325, height: 40, alignment: .center)
+    }
+    
+    func weatherText() -> some View {
+        VStack() {
+            Text(TodoStrings.currentTemperature)
+                    .font(.headline)
+            HStack {
+                Text(TodoStrings.sunsetTime)
+                    .font(.headline)
+                Text(TodoStrings.sunriseTime)
+                        .font(.headline)
+            }
+            HStack(spacing: 4.0) {
+                Image(systemName: "location")
+                Text("South Africa")
+            }.foregroundColor(.gray)
+            .padding(.bottom, 16)
+        }
+        .padding(.top, 16)
+    }
+    
+    private func makeTodoListCard(item: ToDoItem) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
+                .foregroundColor(returnColour(using: item.isCompleted))
+            createTodoTitle(item: item)
+        }
+        .padding(.horizontal, 10)
+        .frame(width: 325, height: 55, alignment: .leading)
+        .overlay {
+            RoundedRectangle(cornerRadius: 4)
+                .stroke(returnColour(using: item.isCompleted),
+                        lineWidth: 1)
+        }
+    }
+    
+    private func createTodoTitle(item: ToDoItem) -> some View {
+        VStack() {
+            Text(item.itemTitle)
+                .font(.custom(TodoStrings.sfProRegular,
+                              size: 17))
+                .padding(.horizontal, -85)
+                .strikethrough(item.isCompleted)
+                .foregroundColor(returnColour(using: item.isCompleted))
+            Text(item.itemDescription)
+                .font(.custom(TodoStrings.sfProRegular,
+                              size: 17))
+                .strikethrough(item.isCompleted)
+                .foregroundColor(returnColour(using: item.isCompleted))
+        }
+        
+    }
+    
+    func returnColour(using isCompleted: Bool) -> Color {
+        return isCompleted ? .gray : .black
     }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
-
 #Preview {
-    ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+    ContentView()
 }

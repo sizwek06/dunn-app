@@ -15,8 +15,8 @@ struct TodoStrings {
     static let sunsetTime = "Sunset: "
     static let sunriseTime = "| Sunrise: "
     
-    
     static let todoListTitle = "To-Do List"
+    static let completedListTitle = "Completed List"
     static let todoItemTitlePlaceHolder = "Cereal"
     static let todoItemDescrPlaceHolder = "Get cereal ingredients"
     static let noTodoItemsListText = "No Todo Items"

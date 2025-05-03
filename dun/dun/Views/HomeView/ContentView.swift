@@ -10,6 +10,30 @@ import CoreData
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
+    var todoArray = [ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                                     todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                                     isCompleted: false),
+                     ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                                     todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                                     isCompleted: false),
+                     ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                                     todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                                     isCompleted: false),
+                     ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                                     todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                                     isCompleted: false)]
+    var completedArray = [ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                                     todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                                     isCompleted: true),
+                     ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                                     todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                                     isCompleted: true),
+                     ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                                     todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                                     isCompleted: true),
+                     ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                                     todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                                     isCompleted: true)]
     
     var body: some View {
         VStack(spacing: 25) {
@@ -19,82 +43,82 @@ struct ContentView: View {
             makeWeatherCard()
             
             ScrollView(.vertical) {
-                createHeader(title: TodoStrings.todoListTitle)
+                createHeader(title: TodoStrings.todoListTitle, isTodo: true)
                     .padding(.vertical, 5)
                     .frame(width: 325, height: 50, alignment: .leading)
                 
-                makeTodoListCard(item: ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
-                                                todoDescription: TodoStrings.todoItemDescrPlaceHolder,
-                                                isCompleted: false))
-                makeTodoListCard(item: ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
-                                                todoDescription: TodoStrings.todoItemDescrPlaceHolder,
-                                                isCompleted: false))
-                makeTodoListCard(item: ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
-                                                todoDescription: TodoStrings.todoItemDescrPlaceHolder,
-                                                isCompleted: false))
-                makeTodoListCard(item: ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
-                                                todoDescription: TodoStrings.todoItemDescrPlaceHolder,
-                                                isCompleted: false))
+                    ForEach(todoArray, id: \.id) { todoItem in
+                        makeTodoListCard(item: todoItem)
+                    }
                 
                 createHeader(title: TodoStrings.completedListTitle)
                     .padding(.vertical, 5)
                     .frame(width: 325, height: 50, alignment: .leading)
                 
-                makeTodoListCard(item: ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
-                                                todoDescription: TodoStrings.todoItemDescrPlaceHolder,
-                                                isCompleted: true))
-                makeTodoListCard(item: ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
-                                                todoDescription: TodoStrings.todoItemDescrPlaceHolder,
-                                                isCompleted: true))
-                makeTodoListCard(item: ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
-                                                todoDescription: TodoStrings.todoItemDescrPlaceHolder,
-                                                isCompleted: true))
-                makeTodoListCard(item: ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
-                                                todoDescription: TodoStrings.todoItemDescrPlaceHolder,
-                                                isCompleted: true))
+                ForEach(completedArray, id: \.id) { todoItem in
+                    makeTodoListCard(item: todoItem)
+                }
             }
             .padding(.top, 10)
         }
     }
     
-    private func createHeader(title: String) -> some View {
-        HStack {
+    private func createHeader(title: String, isTodo: Bool = false) -> some View {
+        HStack() {
             Text(title)
                 .font(.custom(TodoStrings.sfProRounded,
                               size: 20))
+                Spacer()
+            if isTodo {
+                Image(systemName: "plus.square.on.square")
+                    .resizable()
+                    .foregroundColor(.accentColor)
+                    .frame(width: 20, height: 20)
+                    .padding(.vertical)
+            }
         }
     }
     
     private func makeWeatherCard() -> some View {
         HStack(spacing: 10) {
-            Image("03d")
+            Image("04d")
                 .resizable()
-                .frame(width: 80, height: 80)
+                .frame(width: 90, height: 90)
                 .padding(.leading, 30)
             weatherText()
-                .padding(.horizontal, 18)
-                .padding(.trailing, 18)
+                .padding(.horizontal, 10)
+                .padding(.trailing, 20)
         }
-        .background(.white)
+        .background(.generalBackround)
         .clipShape(RoundedRectangle(cornerRadius: 24.0))
         .shadow(radius: 8)
         .frame(width: 325, height: 40, alignment: .center)
+        .padding(.horizontal, 20)
     }
     
     func weatherText() -> some View {
         VStack() {
             Text(TodoStrings.currentTemperature)
-                    .font(.headline)
+                .font(.custom(TodoStrings.sfProRounded,
+                                  size: 17))
+                    .foregroundColor(.appearanceColor)
             HStack {
                 Text(TodoStrings.sunsetTime)
-                    .font(.headline)
+                    .font(.custom(TodoStrings.sfProRounded,
+                                  size: 17))
+                    .foregroundColor(.appearanceColor)
                 Text(TodoStrings.sunriseTime)
-                        .font(.headline)
+                    .font(.custom(TodoStrings.sfProRounded,
+                                  size: 17))
+                    .foregroundColor(.appearanceColor)
             }
             HStack(spacing: 4.0) {
                 Image(systemName: "location")
                 Text("South Africa")
-            }.foregroundColor(.gray)
+            }
+            .font(.custom(TodoStrings.sfProRounded,
+                           size: 17))
+            .foregroundColor(.appearanceColor)
             .padding(.bottom, 16)
         }
         .padding(.top, 16)
@@ -129,11 +153,10 @@ struct ContentView: View {
                 .strikethrough(item.isCompleted)
                 .foregroundColor(returnColour(using: item.isCompleted))
         }
-        
     }
     
     func returnColour(using isCompleted: Bool) -> Color {
-        return isCompleted ? .gray : .black
+        return isCompleted ? .gray : .appearanceColor
     }
 }
 

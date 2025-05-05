@@ -12,10 +12,35 @@ import SwiftUICore
 
 class TodoViewModel: ContentViewModel {
     
-    @Published var loading = true
+    @Published var todoArray = [ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                              todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                              isCompleted: false),
+                     ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                              todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                              isCompleted: false),
+                     ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                              todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                              isCompleted: false),
+                     ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                              todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                              isCompleted: false)]
+    @Published  var completedArray = [ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                   todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                   isCompleted: true),
+                          ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                   todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                   isCompleted: true),
+                          ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                   todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                   isCompleted: true),
+                          ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+                                   todoDescription: TodoStrings.todoItemDescrPlaceHolder,
+                                   isCompleted: true)]
     
     override init(apiClient: any DunApiProtocol = DunApiClient()) {
     }
+    
+    
 }
 
 class LocationDataManager : NSObject, ObservableObject, CLLocationManagerDelegate {

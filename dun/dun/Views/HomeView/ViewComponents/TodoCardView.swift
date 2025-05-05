@@ -9,8 +9,9 @@ import SwiftUICore
 
 extension TodoView {
     func makeTodoListCard(item: ToDoItem) -> some View {
-        HStack {
+        HStack() {
             Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
+                .padding(.leading, 5)
                 .foregroundColor(returnColour(using: item.isCompleted))
                 .frame(width: dynamicTextSize,
                        height: dynamicTextSize,
@@ -33,24 +34,29 @@ extension TodoView {
         .frame(width: 325, height: 55, alignment: .leading)
         .overlay {
             RoundedRectangle(cornerRadius: 4)
-                .stroke(returnColour(using: item.isCompleted),
+                .stroke(item.isCompleted ? .gray : .blue,
                         lineWidth: 1)
         }
     }
     
     private func createTodoTitle(item: ToDoItem) -> some View {
         HStack() {
-            Text(item.itemTitle)
+            
+            Text("\(item.itemTitle):")
                 .font(.custom(TodoStrings.sfProBold,
                               size: dynamicTextSize))
                 .strikethrough(item.isCompleted)
                 .foregroundColor(returnColour(using: item.isCompleted))
-            
+                .padding(.leading, 5)
             Text(item.itemDescription)
                 .font(.custom(TodoStrings.sfProRegular,
                               size: dynamicTextSize))
                 .strikethrough(item.isCompleted)
                 .foregroundColor(returnColour(using: item.isCompleted))
         }
+    }
+    
+    func returnColour(using isCompleted: Bool) -> Color {
+        return isCompleted ? .gray : .appearanceColor
     }
 }

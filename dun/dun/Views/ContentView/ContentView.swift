@@ -12,6 +12,10 @@ import CoreLocation
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject var viewModel: ContentViewModel
+    @FetchRequest(
+            sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
+            animation: .default)
+    private var items: FetchedResults<Item>
     
     init(model: ContentViewModel) {
         self.viewModel = ContentViewModel()
@@ -50,5 +54,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView(model: ContentViewModel())
+    ContentView(model: ContentViewModel()).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }

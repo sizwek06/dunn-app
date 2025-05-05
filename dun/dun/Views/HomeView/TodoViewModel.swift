@@ -24,7 +24,7 @@ class TodoViewModel: ContentViewModel {
                      ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
                               todoDescription: TodoStrings.todoItemDescrPlaceHolder,
                               isCompleted: false)]
-    @Published  var completedArray = [ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
+    @Published var completedArray = [ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
                                    todoDescription: TodoStrings.todoItemDescrPlaceHolder,
                                    isCompleted: true),
                           ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
@@ -37,10 +37,58 @@ class TodoViewModel: ContentViewModel {
                                    todoDescription: TodoStrings.todoItemDescrPlaceHolder,
                                    isCompleted: true)]
     
+    @State var shouldAskForTodo: Bool = false
+    
+    var persistedTodoItemsManager: PersistedTodoItemsProtocol!
+    
     override init(apiClient: any DunApiProtocol = DunApiClient()) {
     }
     
+    func addTodoItem(items: [ToDoItem], isCompleted: Bool = false) {
+        let todoItemsStored = UserDefaults.standard.bool(forKey: TodoStrings.todoStoredKey)
+        
+        if todoItemsStored {
+            self.persistedTodoItemsManager.clearTodoItemsData(isCompletedItems: false)
+            self.resetArrays()
+        }
+        
+        self.persistedTodoItemsManager.saveToDoItemsToCoreData(todoItems: items,
+                                                               isCompletedItems: isCompleted)
+        
+        UserDefaults.standard.set(true, forKey: TodoStrings.todoStoredKey)
+        retrieveStoredData()
+    }
     
+    func retrieveStoredData() {
+        self.resetArrays()
+        let todoItemsStored = UserDefaults.standard.bool(forKey: TodoStrings.todoStoredKey)
+        
+        if todoItemsStored {
+            let todoItems = persistedTodoItemsManager.fetchPersistedTodoItems(isCompletedItems: false)
+            let completedItems = persistedTodoItemsManager.fetchPersistedTodoItems(isCompletedItems: true)
+            
+            if todoItems.isEmpty {
+                requestFirstTodo()
+            }
+            
+            self.todoArray = todoItems
+            self.completedArray = completedItems
+        } else {
+            self.requestFirstTodo()
+        }
+    }
+    
+//    TODO: Move below to OnAppear & show sheet
+    func requestFirstTodo() {
+        DispatchQueue.main.async {
+            self.shouldAskForTodo = true
+        }
+    }
+    
+    func resetArrays() {
+        self.todoArray = []
+        self.completedArray = []
+    }
 }
 
 class LocationDataManager : NSObject, ObservableObject, CLLocationManagerDelegate {

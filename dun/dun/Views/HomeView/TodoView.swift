@@ -25,13 +25,13 @@ struct TodoView: View {
                 ScrollView(.vertical) {
                     createHeader(title: TodoStrings.todoListTitle, isTodo: true)
                     
-                    ForEach(self.viewModel.todoArray, id: \.id) { todoItem in
+                    ForEach(self.$viewModel.todoArray, id: \.id) { todoItem in
                         makeTodoListCard(item: todoItem)
                     }
                     
                     createHeader(title: TodoStrings.completedListTitle)
                     
-                    ForEach(self.viewModel.completedArray, id: \.id) { todoItem in
+                    ForEach(self.$viewModel.completedArray, id: \.id) { todoItem in
                         makeTodoListCard(item: todoItem)
                     }
                 }

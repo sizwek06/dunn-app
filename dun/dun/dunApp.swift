@@ -14,7 +14,7 @@ struct dunApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(model: ContentViewModel())
-//                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 }

@@ -6,13 +6,14 @@
 //
 
 import Foundation
+import SwiftUICore
 
 struct ToDoItem: Identifiable {
     
     let id = UUID()
-    var itemTitle: String!
-    var itemDescription: String!
-    var isCompleted: Bool!
+    var itemTitle: String
+    var itemDescription: String
+    var isCompleted: Bool
     
     public static var todoEntityName: String {
         return TodoStrings.todoEntityKey
@@ -29,5 +30,9 @@ struct ToDoItem: Identifiable {
         self.itemTitle = itemtitle
         self.itemDescription = todoDescription
         self.isCompleted = isCompleted
+    }
+    
+    func returnColor() -> Color {
+        return isCompleted ? .gray : .appearanceColor
     }
 }

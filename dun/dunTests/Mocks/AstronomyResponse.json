@@ -1,0 +1,24 @@
+{
+    "location": {
+        "name": "Paris",
+        "region": "Ile-de-France",
+        "country": "France",
+        "lat": 48.867,
+        "lon": 2.333,
+        "tz_id": "Europe/Paris",
+        "localtime_epoch": 1746517807,
+        "localtime": "2025-05-06 09:50"
+    },
+    "astronomy": {
+        "astro": {
+            "sunrise": "06:22 AM",
+            "sunset": "09:14 PM",
+            "moonrise": "02:52 PM",
+            "moonset": "04:14 AM",
+            "moon_phase": "Waxing Gibbous",
+            "moon_illumination": 63,
+            "is_moon_up": 0,
+            "is_sun_up": 1
+        }
+    }
+}

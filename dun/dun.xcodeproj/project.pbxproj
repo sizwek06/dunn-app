@@ -37,6 +37,19 @@
 			);
 			target = 2873ABD92DC5B51100F8504D /* dun */;
 		};
+		2896F3302DC9F80D0067F2E9 /* Exceptions for "dun" folder in "dunTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Models/Networking/HTTPClient.swift,
+				Models/Networking/Networking.swift,
+				Models/Networking/WeatherError.swift,
+				Models/WeatherAstronomyResponseModel.swift,
+				Models/WeatherRequests/DunBiometricState.swift,
+				Models/WeatherResponseModel.swift,
+				Theme/TodoStrings.swift,
+			);
+			target = 2873ABEE2DC5B51400F8504D /* dunTests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -44,6 +57,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				2873AD0A2DC5E77400F8504D /* Exceptions for "dun" folder in "dun" target */,
+				2896F3302DC9F80D0067F2E9 /* Exceptions for "dun" folder in "dunTests" target */,
 			);
 			path = dun;
 			sourceTree = "<group>";

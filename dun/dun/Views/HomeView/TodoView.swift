@@ -7,6 +7,7 @@
 
 import SwiftUICore
 import SwiftUI
+import CoreData
 
 struct TodoView: View {
     @ObservedObject var viewModel = TodoViewModel()
@@ -14,102 +15,149 @@ struct TodoView: View {
     @ScaledMetric(relativeTo: .title) var dynamicTitleSize = 15
     @ScaledMetric(relativeTo: .body) var dynamicTextSize = 12
     
-    var todoArray = [ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
-                              todoDescription: TodoStrings.todoItemDescrPlaceHolder,
-                              isCompleted: false),
-                     ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
-                              todoDescription: TodoStrings.todoItemDescrPlaceHolder,
-                              isCompleted: false),
-                     ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
-                              todoDescription: TodoStrings.todoItemDescrPlaceHolder,
-                              isCompleted: false),
-                     ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
-                              todoDescription: TodoStrings.todoItemDescrPlaceHolder,
-                              isCompleted: false)]
-    var completedArray = [ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
-                                   todoDescription: TodoStrings.todoItemDescrPlaceHolder,
-                                   isCompleted: true),
-                          ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
-                                   todoDescription: TodoStrings.todoItemDescrPlaceHolder,
-                                   isCompleted: true),
-                          ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
-                                   todoDescription: TodoStrings.todoItemDescrPlaceHolder,
-                                   isCompleted: true),
-                          ToDoItem(itemtitle: TodoStrings.todoItemTitlePlaceHolder,
-                                   todoDescription: TodoStrings.todoItemDescrPlaceHolder,
-                                   isCompleted: true)]
+    @EnvironmentObject var manager: DataManager
+    @Environment(\.managedObjectContext) var viewContext
+    @FetchRequest(sortDescriptors: []) private var todoFetchedResults: FetchedResults<ToDoItems>
+    @State private var refreshID = UUID()
+    @Binding var showAdd: Bool
+    @State var showingOptions = false
+    @State var todoListShown = true
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             VStack {
-                createHeader(title: TodoStrings.weatherTitle)
+                createHeader(currentSection: .weather)
                 makeWeatherCard()
-                
-                ScrollView(.vertical) {
-                    createHeader(title: TodoStrings.todoListTitle, isTodo: true)
-                    
-                    ForEach(todoArray, id: \.id) { todoItem in
-                        makeTodoListCard(item: todoItem)
+                createHeader(currentSection: todoListShown ? .todo : .completed)
+                List {
+                    ForEach(getCompletedTasks(forTodoList: todoListShown), id: \.self) { todoItem in
+                        NavigationLink(destination: AddToDoView(todo: todoItem)) {
+                            makeTodoListCard(item: todoItem)
+                                .onTapGesture {
+                                    self.openViewTask(todoItem: todoItem)
+                                }
+                        }.disabled(!todoListShown)
                     }
-                    
-                    createHeader(title: TodoStrings.completedListTitle)
-                    
-                    ForEach(completedArray, id: \.id) { todoItem in
-                        makeTodoListCard(item: todoItem)
-                    }
+                    .onDelete(perform: deleteTask)
                 }
-                
-            }.onAppear {
-                
+                .listStyle(.inset)
+                .padding(.bottom, 30)
+                .padding(.leading, 20)
+                .listRowSeparator(.hidden)
+            }
+            .onAppear {
+                showAdd = false
                 Task {
                     await self.getWeatherDetails()
                 }
-                
             }
-            .toolbar {
-                ToolbarItem(placement: .status) {
-                    Text(TodoStrings.appName)
-                        .font(.custom(TodoStrings.sfProRounded,
-                                      size: 20,
-                                      relativeTo: .title))
+            .navigationTitle(TodoStrings.appName)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbar (content: {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        self.todoListShown = !todoListShown
+                    } label: {
+                        Label("Archive",
+                              systemImage: "archivebox")
+                    }
                 }
-            }
+                ToolbarItem(placement: .status) {
+                    Button {
+                        if let url = URL(string: TodoStrings.productivityURL) {
+                            UIApplication.shared.open(url)
+                        }
+                    } label: {
+                        Label("Archive",
+                              systemImage: "questionmark.circle.fill")
+                    }
+                }
+            })
         }
     }
     
-    private func createHeader(title: String, isTodo: Bool = false) -> some View {
-        HStack() {
-            Text(title)
-                .font(.custom(TodoStrings.sfProRounded,
-                              size: dynamicHeaderSize,
-                              relativeTo: .title))
-                .frame(width: TodoStrings.returnDesiredWidth() - (isTodo ? 90 : 50),
-                       height: UIScreen.main.bounds.height / 3,
-                       alignment: .leading)
-            if isTodo {
-                Image(systemName: "plus.square.on.square")
-                    .resizable()
-                    .foregroundColor(.accentColor)
-                    .frame(width: 20, height: 20)
-                    .padding(.vertical)
-            }
-        }
-        .frame(width: 325, height: 50, alignment: .leading)
-    }
-    
-    func returnColour(using isCompleted: Bool) -> Color {
-        return isCompleted ? .gray : .appearanceColor
+    func openProductivityLink() -> some View {
+       return Text("[Help?]\(TodoStrings.productivityURL)")
     }
     
     func getWeatherDetails() async {
-        print("Current Loader state \(self.viewModel.loading)")
         await self.viewModel.getAsyncWeather()
         await self.viewModel.getAsyncAstronomy()
+    }
+    
+    func getCompletedTasks(forTodoList: Bool) -> [ToDoItems] {
+        var array: [ToDoItems] = []
         
-        print("Current Loader state \(self.viewModel.loading)")
+        if forTodoList {
+            todoFetchedResults.forEach { item in
+                if item.isCompleted == "todo" {
+                    array.append(item)
+                }
+            }
+        } else {
+            todoFetchedResults.forEach { item in
+                if item.isCompleted != "todo" {
+                    array.append(item)
+                }
+            }
+        }
+        
+        return array
+    }
+    
+    func openViewTask(todoItem: ToDoItems?) {
+        showAdd.toggle()
+        if let todoDoItem = todoItem {
+           AddToDoView(todo: todoDoItem)
+        } else {
+            AddToDoView()
+        }
+    }
+    
+    func completeTask(at indexSet: IndexSet) {
+        for index in indexSet {
+            let item = todoFetchedResults[index]
+            let todo = ToDoItems(context: self.viewContext)
+            
+            todo.itemIdentifier = item.itemIdentifier
+            todo.itemTitle = item.itemTitle
+            todo.isCompleted = item.isCompleted
+            todo.itemDescription = item.itemDescription
+            
+            self.viewContext.delete(item)
+            
+            do {
+                try viewContext.save()
+                print("Delete done")
+            } catch {
+                print("Error deleting")
+            }
+        }
+    }
+    
+    func deleteTask(at indexSet: IndexSet) {
+        for index in indexSet {
+            let todo = todoFetchedResults[index]
+            self.viewContext.delete(todo)
+            
+            do {
+                try viewContext.save()
+                print("Delete done")
+            } catch {
+                print("Error deleting")
+            }
+        }
     }
 }
 
 #Preview {
-    TodoView()
+    struct Preview: View {
+        @State var bool = true
+        var body: some View {
+            TodoView(showAdd: $bool)
+        }
+    }
+    
+    return Preview()
 }

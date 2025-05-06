@@ -8,12 +8,12 @@
 import Foundation
 import SwiftUICore
 
-struct ToDoItem: Identifiable {
+struct ToDoItem: Identifiable, Hashable {
     
-    let id = UUID()
+    var id: UUID
     var itemTitle: String
     var itemDescription: String
-    var isCompleted: Bool
+    var isCompleted: String
     
     public static var todoEntityName: String {
         return TodoStrings.todoEntityKey
@@ -23,16 +23,26 @@ struct ToDoItem: Identifiable {
         return TodoStrings.completedToDoEntityKey
     }
     
-    public init(itemtitle: String,
+    var returnTitleColor: Color {
+        return isCompleted == "done" ? .gray : .appearanceColor
+    }
+    
+    public init(id: UUID,
+                itemTitle: String,
                 todoDescription: String,
-                isCompleted: Bool) {
+                isCompleted: String) {
         
-        self.itemTitle = itemtitle
+        self.id = id
+        self.itemTitle = itemTitle
         self.itemDescription = todoDescription
         self.isCompleted = isCompleted
     }
     
     func returnColor() -> Color {
-        return isCompleted ? .gray : .appearanceColor
+        return isCompleted == "done" ? .gray : .appearanceColor
     }
+}
+
+enum ToDoStatus {
+    case todo, done
 }

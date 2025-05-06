@@ -35,6 +35,7 @@ struct TodoStrings {
     static let todoEntityKey = "ToDoItems"
     static let completedToDoEntityKey = "CompletedToDoItems"
     
+    static let coreDataIdentifier = "itemIdentifier"
     static let coreDataTitle = "itemTitle"
     static let coreDataDescription = "itemDescription"
     static let coreDataCompletion = "isCompleted"
@@ -49,6 +50,10 @@ struct TodoStrings {
     
     static func returnDesiredWidth() -> CGFloat {
         return UIScreen.main.bounds.width - 20
+    }
+    
+    func returnColor(for itemComplete: Bool) -> Color {
+        return itemComplete ? .gray : .appearanceColor
     }
 }
 

@@ -7,18 +7,19 @@
 
 import SwiftUICore
 import UIKit
+import SwiftUI
 
 extension TodoView {
-    func createHeader(title: String, isTodo: Bool = false) -> some View {
+    func createHeader(currentSection: HeaderDetails) -> some View {
         HStack() {
-            Text(title)
+            Text(currentSection.text)
                 .font(.custom(TodoStrings.sfProRounded,
                               size: dynamicHeaderSize,
                               relativeTo: .title))
-                .frame(width: TodoStrings.returnDesiredWidth() - (isTodo ? 90 : 50),
+                .frame(width: TodoStrings.returnDesiredWidth() - (currentSection == .todo ? 90 : 50),
                        height: UIScreen.main.bounds.height / 3,
                        alignment: .leading)
-            if isTodo {
+            if currentSection == .todo {
                 Image(systemName: "plus.square.on.square")
                     .resizable()
                     .foregroundColor(.accentColor)
@@ -29,10 +30,31 @@ extension TodoView {
                     }
             }
         }
-        .frame(width: 325, height: 50, alignment: .leading)
+        .frame(width: 325, height: 30, alignment: .leading)
         .sheet(isPresented: $showAdd) {
             AddToDoView()
-                .presentationDetents([.height(200)])
+                .presentationDetents([.height(275)])
+        }
+    }
+    
+    enum HeaderDetails {
+        case weather
+        case todo
+        case completed
+        
+        var text: String {
+            switch self {
+            case .todo: return TodoStrings.todoListTitle
+            case .weather: return TodoStrings.weatherTitle
+            case .completed: return TodoStrings.completedListTitle
+            }
+        }
+        
+        var width: CGFloat {
+            switch self {
+            case .todo: return 90
+            default: return 50
+            }
         }
     }
 }

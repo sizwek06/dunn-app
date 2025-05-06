@@ -10,38 +10,34 @@ import SwiftUICore
 extension TodoView {
     struct makeTodoListCard: View {
         
-        @Binding var item: ToDoItem
+        var item: ToDoItems
+        
         @ScaledMetric(relativeTo: .headline) var dynamicHeaderSize = 17
         @ScaledMetric(relativeTo: .title) var dynamicTitleSize = 15
         @ScaledMetric(relativeTo: .body) var dynamicTextSize = 12
         
         var body: some View {
-            HStack() {
-                Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
+            HStack(alignment: .center) {
+                Image(systemName: item.isCompleted != "todo" ? "checkmark.circle.fill" : "circle")
                     .padding(.leading, 5)
-                    .foregroundColor(item.returnColor())
+                    .foregroundColor(item.returnTitleColor)
                     .frame(width: dynamicTextSize,
                            height: dynamicTextSize,
                            alignment: .center)
-                    .onTapGesture {
-                        print("Complete OK")
-                    }
-                createTodoTitle(item: $item)
+                createTodoTitle(item: item)
                 Spacer()
-                Image(systemName: item.isCompleted ? "trash.circle.fill" : "trash.circle")
+                Image(systemName: item.isCompleted != "todo" ? "trash.circle.fill" : "trash.circle")
                     .foregroundColor(.red)
                     .frame(width: TodoStrings.returnDesiredWidth() / 14,
                            height: TodoStrings.returnDesiredWidth() / 14,
                            alignment: .center)
-                    .onTapGesture {
-                        print("Delete OK")
-                    }
             }
             .padding(.horizontal, 10)
-            .frame(width: 325, height: 55, alignment: .leading)
+            .padding(.leading, 10)
+            .frame(width: 300, height: 55, alignment: .leading)
             .overlay {
                 RoundedRectangle(cornerRadius: 4)
-                    .stroke(item.isCompleted ? .gray : .blue,
+                    .stroke(item.isCompleted != "todo" ? .gray : .black,
                             lineWidth: 1)
             }
         }
@@ -49,7 +45,8 @@ extension TodoView {
     
     struct createTodoTitle: View {
         
-        @Binding var item: ToDoItem
+        var item: ToDoItems
+        
         @ScaledMetric(relativeTo: .headline) var dynamicHeaderSize = 17
         @ScaledMetric(relativeTo: .title) var dynamicTitleSize = 15
         @ScaledMetric(relativeTo: .body) var dynamicTextSize = 12
@@ -57,17 +54,17 @@ extension TodoView {
         var body: some View {
             HStack() {
                 
-                Text("\(item.itemTitle):")
+                Text("\(String(describing: item.itemTitle)):")
                     .font(.custom(TodoStrings.sfProBold,
                                   size: dynamicTextSize))
-                    .strikethrough(item.isCompleted)
-                    .foregroundColor(item.returnColor())
+                    .strikethrough(item.isCompleted != "todo")
+                    .foregroundColor(item.returnTitleColor)
                     .padding(.leading, 5)
                 Text(item.itemDescription)
                     .font(.custom(TodoStrings.sfProRegular,
                                   size: dynamicTextSize))
-                    .strikethrough(item.isCompleted)
-                    .foregroundColor(item.returnColor())
+                    .strikethrough(item.isCompleted != "todo")
+                    .foregroundColor(item.returnTitleColor)
             }
         }
     }

@@ -65,7 +65,9 @@ struct TodoView: View {
                 }
                 ToolbarItem(placement: .status) {
                     Button {
-                        // TODO Open Productivity Link?
+                        if let url = URL(string: TodoStrings.productivityURL) {
+                            UIApplication.shared.open(url)
+                        }
                     } label: {
                         Label("Archive",
                               systemImage: "questionmark.circle.fill")
@@ -73,6 +75,10 @@ struct TodoView: View {
                 }
             })
         }
+    }
+    
+    func openProductivityLink() -> some View {
+       return Text("[Help?]\(TodoStrings.productivityURL)")
     }
     
     func getWeatherDetails() async {

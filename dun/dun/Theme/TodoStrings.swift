@@ -40,6 +40,8 @@ struct TodoStrings {
     static let coreDataDescription = "itemDescription"
     static let coreDataCompletion = "isCompleted"
     
+    static let productivityURL = "https://asana.com/resources/how-to-be-more-productive"
+    static let productivitytext = "Need help?"
     // MARK: Fonts
     static let sfPro = "SF-ProText"
     static let sfProRounded = "SFProRounded-Bold"

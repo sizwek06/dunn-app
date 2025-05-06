@@ -19,6 +19,7 @@ extension TodoView {
                 .padding(.horizontal, 10)
                 .padding(.trailing, 20)
         }
+        .padding(.top, 10)
         .background(.generalBackround)
         .clipShape(RoundedRectangle(cornerRadius: 24.0))
         .shadow(radius: 8)

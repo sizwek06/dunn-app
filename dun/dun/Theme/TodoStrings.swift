@@ -13,6 +13,7 @@ struct TodoStrings {
     
     static let appName = "dūn"
     
+    // MARK: Todo List
     static let weatherTitle = "Today's Weather"
     static let currentTemperature = "Temp: "
     static let sunsetTime = "Sunset: "
@@ -29,18 +30,19 @@ struct TodoStrings {
     
     static let generalUnknownError = "An Unknown Error has occurred"
     static let todoStoredKey = "todoStoredKey"
+    
+    // MARK: Todo List
     static let todoEntityKey = "ToDoItems"
     static let completedToDoEntityKey = "CompletedToDoItems"
     
+    static let coreDataIdentifier = "itemIdentifier"
+    static let coreDataTitle = "itemTitle"
     static let coreDataDescription = "itemDescription"
     static let coreDataCompletion = "isCompleted"
     
-    static let alertCancel = "Cancel"
-    static let alertComplete = "Complete"
-    
-    static let userDefaultBiometricsKey = "faceID"
-    static let useFaceIDText = "Use FaceID"
-    
+    static let productivityURL = "https://asana.com/resources/how-to-be-more-productive"
+    static let productivitytext = "Need help?"
+    // MARK: Fonts
     static let sfPro = "SF-ProText"
     static let sfProRounded = "SFProRounded-Bold"
     static let sfProRegular = "SF-ProText-Regular"
@@ -51,11 +53,15 @@ struct TodoStrings {
     static func returnDesiredWidth() -> CGFloat {
         return UIScreen.main.bounds.width - 20
     }
+    
+    func returnColor(for itemComplete: Bool) -> Color {
+        return itemComplete ? .gray : .appearanceColor
+    }
 }
 
 extension Color {
     
-    static var appearanceColor: Color { Color(UIColor(named: "AppearanceColor") ?? UIColor(Color.white)) }
+    static var appearanceColor: Color { Color(UIColor(named: "AppearanceColor") ?? UIColor(Color.black)) }
     static var generalBackground: Color { Color(UIColor(named: "GeneralBackround") ?? UIColor(Color.white)) }
     static var graytextColor: Color { Color(UIColor(named: "GreyText") ?? UIColor(Color.white)) }
 }

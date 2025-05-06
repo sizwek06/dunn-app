@@ -7,13 +7,14 @@
 
 import Foundation
 import SwiftUI
+import CoreLocation
 
-class ContentViewModel: ObservableObject {
+class ContentViewModel: NSObject, ObservableObject {
     
     enum ViewState: Equatable {
         case loading
         case weatherReceived
-        case errorView(String)
+        case locationUnknown
     }
     
     var currentTemp: Double = 0
@@ -26,27 +27,31 @@ class ContentViewModel: ObservableObject {
     // TODO: make above struct
     
     var todoViewModel: TodoViewModel?
-    var errorViewModel: ErrorViewModel?
     var errorDescription: String?
     var errorCode: String?
     
     @Published var showingError = false
-    @Published var state: ViewState = .loading
+    @Published var viewState: ViewState = .loading
     
-    let locationManager = LocationDataManager()
+    let locationManager: CLLocationManager!
     let apiClient: DunApiProtocol!
     
-    init(apiClient: DunApiProtocol = DunApiClient()) {
+    
+    public init(apiClient: DunApiProtocol = DunApiClient(),
+                locationManager: CLLocationManager = CLLocationManager()) {
+        
         self.apiClient = apiClient
+        self.locationManager = CLLocationManager()
     }
     
     func getAsyncWeather() async {
         
         self.todoViewModel = TodoViewModel()
-        self.errorViewModel = ErrorViewModel()
-        guard let locationManager = locationManager.locationManager.location else {
-            self.state = .errorView("Location not found, please review device settings and restart app.")
-            // TODO: Test if the location fails
+        
+        guard let locationManager = locationManager.location else {
+            self.errorCode = "Location not found.".uppercased()
+            self.errorDescription = "Rlease review device's location settings and restart app.".uppercased()
+            
             return
         }
         
@@ -64,24 +69,22 @@ class ContentViewModel: ObservableObject {
                     self.todoViewModel?.currentTemp = weather.current.tempC
                     self.todoViewModel?.condition = weather.current.condition
                     
-                    self.state = .weatherReceived
+                    self.viewState = .weatherReceived
                 }
             } catch let error as WeatherErrorDetails {
                 await MainActor.run {
-                    self.errorViewModel?.errorDescription = error.weatherError.errorDescription
-                    self.errorViewModel?.errorCode = "Error Code \(error.weatherError.errorCode)".uppercased()
-                    
                     self.showingError = true
-                    self.state = .errorView(error.weatherError.errorDescription)
+                    self.errorDescription = error.weatherError.errorDescription
                 }
             }
         }
     }
     
     func getAsyncAstronomy() async {
-        guard let locationManager = locationManager.locationManager.location else {
-            self.state = .errorView("Location not found, please review device settings and restart app.")
-            // TODO: Test if the location fails
+        guard let locationManager = locationManager.location else {
+            self.errorCode = "Location not found.".uppercased()
+            self.errorDescription = "Rlease review device's location settings and restart app.".uppercased()
+            
             return
         }
         
@@ -97,17 +100,26 @@ class ContentViewModel: ObservableObject {
                     self.todoViewModel?.sunSetTime = astronomy.astronomy.astro.sunset
                     self.todoViewModel?.sunRiseTime = astronomy.astronomy.astro.sunrise
                     
-                    self.state = .weatherReceived
+                    self.viewState = .weatherReceived
                 }
             } catch let error as WeatherErrorDetails {
                 await MainActor.run {
-                    self.errorViewModel?.errorDescription = error.weatherError.errorDescription.uppercased()
-                    self.errorViewModel?.errorCode = ("Error Code: \(error.weatherError.errorCode)").uppercased()
+                    self.errorDescription = error.weatherError.errorDescription.uppercased()
+                    self.errorCode = ("Error Code: \(error.weatherError.errorCode)").uppercased()
                     
                     self.showingError = true
-                    self.state = .errorView(error.weatherError.errorDescription.uppercased())
+                    self.errorDescription = error.weatherError.errorDescription
                 }
             }
+        }
+    }
+    
+    func checkLocationStatus() -> ViewState {
+        switch locationManager.authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways, .authorized:
+            return .loading
+        default:
+            return .locationUnknown
         }
     }
 }

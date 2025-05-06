@@ -1,14 +1,14 @@
 //
-//  WeatherSunResponse.swift
+//  WeatherAstronomyResponseModel.swift
 //  dun
 //
 //  Created by Sizwe Khathi on 2025/05/03.
 //
 
 import Foundation
-// TODO: Add initializaers
+
 // MARK: - WeatherSunResponse
-public struct WeatherSunResponseModel: Codable {
+public struct WeatherAstronomyResponseModel: Codable {
     let astronomy: Astronomy
 }
 

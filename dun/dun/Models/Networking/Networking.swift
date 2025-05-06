@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-enum RequestMethod: String {
+public enum RequestMethod: String {
     case get = "GET"
     /// [Sizwe K.]: Would add more but only this is required currently (avoiding unneecessary future proof)
 }
@@ -25,21 +25,23 @@ extension Encodable {
     }
 }
 
-protocol DunApiProtocol {
+public protocol DunApiProtocol {
 
     func asyncRequest<T: Decodable>(endpoint: EndpointProvider, responseModel: T.Type) async throws -> T
 }
 
-final class DunApiClient: DunApiProtocol {
+open class DunApiClient: DunApiProtocol {
     
-    var session: URLSession {
+    public init() {}
+   
+    public var session: URLSession {
         let configuration = URLSessionConfiguration.default
         configuration.waitsForConnectivity = true
         configuration.timeoutIntervalForRequest = 60
         return URLSession(configuration: configuration)
     }
     
-    func asyncRequest<T: Decodable>(endpoint: EndpointProvider, responseModel: T.Type) async throws -> T {
+    public func asyncRequest<T: Decodable>(endpoint: EndpointProvider, responseModel: T.Type) async throws -> T {
         do {
             let (data, response) = try await session.data(for: endpoint.asURLRequest())
             print("Response: \(response)")
@@ -59,7 +61,7 @@ final class DunApiClient: DunApiProtocol {
         }
     }
     
-    private func manageResponse<T: Decodable>(data: Data, response: URLResponse) throws -> T {
+    func manageResponse<T: Decodable>(data: Data, response: URLResponse) throws -> T {
         guard let response = response as? HTTPURLResponse else {
             throw WeatherError(
                 errorCode: 0,

@@ -11,16 +11,13 @@ extension TodoView {
     struct makeTodoListCard: View {
         
         var item: ToDoItems
-        
-        @ScaledMetric(relativeTo: .headline) var dynamicHeaderSize = 17
-        @ScaledMetric(relativeTo: .title) var dynamicTitleSize = 15
-        @ScaledMetric(relativeTo: .body) var dynamicTextSize = 12
+        @ScaledMetric(relativeTo: .body) var dynamicTextSize = 11
         
         var body: some View {
             HStack(alignment: .center) {
                 Image(systemName: item.isCompleted != "todo" ? "checkmark.circle.fill" : "circle")
                     .padding(.leading, 5)
-                    .foregroundColor(item.returnTitleColor)
+                    .foregroundColor(.gray)
                     .frame(width: dynamicTextSize,
                            height: dynamicTextSize,
                            alignment: .center)
@@ -32,6 +29,7 @@ extension TodoView {
                            height: TodoStrings.returnDesiredWidth() / 14,
                            alignment: .center)
             }
+            .clipShape(RoundedRectangle(cornerRadius: 24.0))
             .padding(.horizontal, 10)
             .padding(.leading, 10)
             .frame(width: 300, height: 55, alignment: .leading)
@@ -46,25 +44,16 @@ extension TodoView {
     struct createTodoTitle: View {
         
         var item: ToDoItems
-        
-        @ScaledMetric(relativeTo: .headline) var dynamicHeaderSize = 17
-        @ScaledMetric(relativeTo: .title) var dynamicTitleSize = 15
-        @ScaledMetric(relativeTo: .body) var dynamicTextSize = 12
+        @ScaledMetric(relativeTo: .body) var dynamicTextSize = 13
         
         var body: some View {
             HStack() {
-                
-                Text("\(String(describing: item.itemTitle)):")
+                Text("\(String(describing: item.itemTitle)): \(item.itemDescription)")
                     .font(.custom(TodoStrings.sfProBold,
                                   size: dynamicTextSize))
                     .strikethrough(item.isCompleted != "todo")
                     .foregroundColor(item.returnTitleColor)
                     .padding(.leading, 5)
-                Text(item.itemDescription)
-                    .font(.custom(TodoStrings.sfProRegular,
-                                  size: dynamicTextSize))
-                    .strikethrough(item.isCompleted != "todo")
-                    .foregroundColor(item.returnTitleColor)
             }
         }
     }

@@ -31,20 +31,37 @@ struct TodoView: View {
                 makeWeatherCard()
                 createHeader(currentSection: todoListShown ? .todo : .completed)
                 List {
-                    ForEach(getCompletedTasks(forTodoList: todoListShown), id: \.self) { todoItem in
-                        NavigationLink(destination: AddToDoView(todo: todoItem)) {
-                            makeTodoListCard(item: todoItem)
-                                .onTapGesture {
-                                    self.openViewTask(todoItem: todoItem)
-                                }
-                        }.disabled(!todoListShown)
+                    Section {
+                        ForEach(getCompletedTasks(forTodoList: todoListShown), id: \.self) { todoItem in
+                            NavigationLink(destination: AddToDoView(todo: todoItem)) {
+                                makeTodoListCard(item: todoItem)
+                                    .onTapGesture {
+                                        self.openViewTask(todoItem: todoItem)
+                                    }
+                            }.disabled(!todoListShown)
+                            .listRowInsets(.init(top: 10, leading: 23, bottom: 0, trailing: 25))
+                            .listRowSeparator(.hidden)
+                        }
+                        .onDelete(perform: deleteTask)
                     }
-                    .onDelete(perform: deleteTask)
+                    
+                    Section(header: Text(TodoStrings.completedListTitle)) {
+                        ForEach(getCompletedTasks(forTodoList: !todoListShown), id: \.self) { todoItem in
+                            NavigationLink(destination: AddToDoView(todo: todoItem)) {
+                                makeTodoListCard(item: todoItem)
+                                    .onTapGesture {
+                                        self.openViewTask(todoItem: todoItem)
+                                    }
+                            }.disabled(todoListShown)
+                            .listRowInsets(.init(top: 10, leading: 23, bottom: 0, trailing: 25))
+                            .listRowSeparator(.hidden)
+                        }
+                        .onDelete(perform: deleteTask)
+                    }
                 }
                 .listStyle(.inset)
                 .padding(.bottom, 30)
                 .padding(.leading, 20)
-                .listRowSeparator(.hidden)
             }
             .onAppear {
                 showAdd = false
@@ -56,14 +73,6 @@ struct TodoView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar (content: {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        self.todoListShown = !todoListShown
-                    } label: {
-                        Label("Archive",
-                              systemImage: "archivebox")
-                    }
-                }
                 ToolbarItem(placement: .status) {
                     Button {
                         if let url = URL(string: TodoStrings.productivityURL) {
@@ -109,6 +118,7 @@ struct TodoView: View {
     
     func openViewTask(todoItem: ToDoItems?) {
         showAdd.toggle()
+        
         if let todoDoItem = todoItem {
            AddToDoView(todo: todoDoItem)
         } else {

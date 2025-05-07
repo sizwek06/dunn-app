@@ -10,7 +10,6 @@ import SwiftUI
 import CoreData
 
 struct TodoView: View {
-    @ObservedObject var viewModel = TodoViewModel()
     @ScaledMetric(relativeTo: .headline) var dynamicHeaderSize = 17
     @ScaledMetric(relativeTo: .title) var dynamicTitleSize = 15
     @ScaledMetric(relativeTo: .body) var dynamicTextSize = 12
@@ -18,10 +17,12 @@ struct TodoView: View {
     @EnvironmentObject var manager: DataManager
     @Environment(\.managedObjectContext) var viewContext
     @FetchRequest(sortDescriptors: []) private var todoFetchedResults: FetchedResults<ToDoItems>
-    @State private var refreshID = UUID()
+    
     @Binding var showAdd: Bool
     @State var showingOptions = false
     @State var todoListShown = true
+    
+    @ObservedObject var viewModel = TodoViewModel()
     
     var body: some View {
         NavigationView {

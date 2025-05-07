@@ -39,6 +39,7 @@ struct TodoView: View {
                                         self.openViewTask(todoItem: todoItem)
                                     }
                             }.disabled(!todoListShown)
+                            .listRowInsets(.init(top: 10, leading: 23, bottom: 0, trailing: 25))
                             .listRowSeparator(.hidden)
                         }
                         .onDelete(perform: deleteTask)
@@ -52,6 +53,7 @@ struct TodoView: View {
                                         self.openViewTask(todoItem: todoItem)
                                     }
                             }.disabled(todoListShown)
+                            .listRowInsets(.init(top: 10, leading: 23, bottom: 0, trailing: 25))
                             .listRowSeparator(.hidden)
                         }
                         .onDelete(perform: deleteTask)

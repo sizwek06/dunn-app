@@ -50,6 +50,34 @@
 			);
 			target = 2873ABEE2DC5B51400F8504D /* dunTests */;
 		};
+		2896F33A2DCB1EFF0067F2E9 /* Exceptions for "dun" folder in "dunUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Models/Networking/HTTPClient.swift,
+				Models/Networking/Networking.swift,
+				Models/Networking/WeatherError.swift,
+				Models/ToDoItem.swift,
+				Models/WeatherAstronomyResponseModel.swift,
+				Models/WeatherRequests/DunBiometricState.swift,
+				Models/WeatherResponseModel.swift,
+				Persistence/Models/DataManager.swift,
+				"Persistence/Models/ToDoItems+CoreDataClass.swift",
+				"Persistence/Models/ToDoItems+CoreDataProperties.swift",
+				Persistence/Persistence.swift,
+				Theme/Assets.xcassets,
+				Theme/TodoStrings.swift,
+				Views/ContentView/ContentViewModel.swift,
+				Views/HomeView/AddTodo/AddToDoView.swift,
+				Views/HomeView/TodoView.swift,
+				Views/HomeView/TodoViewModel.swift,
+				Views/HomeView/ViewComponents/TodoCardView.swift,
+				Views/HomeView/ViewComponents/ToDoHeaderView.swift,
+				Views/HomeView/ViewComponents/WeatherCardView.swift,
+				Views/SupportViews/ErrorView.swift,
+				Views/SupportViews/LoadingView.swift,
+			);
+			target = 2873ABF82DC5B51400F8504D /* dunUITests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -58,6 +86,7 @@
 			exceptions = (
 				2873AD0A2DC5E77400F8504D /* Exceptions for "dun" folder in "dun" target */,
 				2896F3302DC9F80D0067F2E9 /* Exceptions for "dun" folder in "dunTests" target */,
+				2896F33A2DCB1EFF0067F2E9 /* Exceptions for "dun" folder in "dunUITests" target */,
 			);
 			path = dun;
 			sourceTree = "<group>";

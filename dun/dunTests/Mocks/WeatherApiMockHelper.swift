@@ -9,8 +9,8 @@ import Foundation
 
 class WeatherApiMockHelper: Mockable, DunApiProtocol {
     
-    var invokeSuccess = false
-    var invokeFailure = false
+    var invokeWeather = false
+    var invokeAstronomy = false
     var invokeError = false
     
     private static func fetchJsonData(in file: String) throws -> Data {
@@ -51,9 +51,9 @@ class WeatherApiMockHelper: Mockable, DunApiProtocol {
     }
     
     func asyncRequest<T>(endpoint: EndpointProvider, responseModel: T.Type) async throws -> T where T : Decodable {
-        if invokeSuccess {
+        if invokeAstronomy {
             return WeatherApiMockHelper.returnAstronomyResponse() as! T
-        } else if invokeFailure {
+        } else if invokeWeather {
             return WeatherApiMockHelper.returnWeatherResponse() as! T
         } else {
             return WeatherApiMockHelper.returnWeatherApiErrorResponse() as! T
@@ -61,8 +61,8 @@ class WeatherApiMockHelper: Mockable, DunApiProtocol {
     }
     
     func reset() {
-        invokeSuccess = false
-        invokeFailure = false
+        invokeWeather = false
+        invokeAstronomy = false
         invokeError = false
     }
 }

@@ -63,8 +63,7 @@ struct ContentView: View {
         case .loading, .locationUnknown:
             LoadingView()
         case .weatherReceived:
-            TodoView(viewModel: self.viewModel.todoViewModel ?? TodoViewModel(),
-                     showAdd: $showAdd)
+            TodoView(showAdd: $showAdd, viewModel: self.viewModel.todoViewModel ?? TodoViewModel())
         }
     }
     

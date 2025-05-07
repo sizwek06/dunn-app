@@ -22,24 +22,13 @@ final class dunTests: XCTestCase {
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testAstronomy() async throws {
-        do {
-            dunapiMock.invokeSuccess = true
-            let result = try await dunapiMock.asyncRequest(endpoint: WeatherEndpoints.getCurrent, responseModel: WeatherAstronomyResponseModel.self)
-            XCTAssertEqual(result.astronomy.astro.sunrise, "06:22 AM")
-            XCTAssertEqual(result.astronomy.astro.sunset, "09:14 PM")
-        } catch {
-            print(error)
-            throw error
-        }
+        weatherRequestsMock.reset()
+        weatherRequestsMock = nil
     }
 
     func testWeather() async throws {
         do {
-            dunapiMock.invokeFailure = true
+            dunapiMock.invokeWeather = true
             let result = try await dunapiMock.asyncRequest(endpoint: WeatherEndpoints.getCurrent, responseModel: WeatherResponseModel.self)
             XCTAssertEqual(result.location.country, "South Africa")
             
@@ -53,13 +42,25 @@ final class dunTests: XCTestCase {
         }
     }
 
+    func testAstronomy() async throws {
+        do {
+            dunapiMock.invokeAstronomy = true
+            let result = try await dunapiMock.asyncRequest(endpoint: WeatherEndpoints.getCurrent, responseModel: WeatherAstronomyResponseModel.self)
+            XCTAssertEqual(result.astronomy.astro.sunrise, "06:22 AM")
+            XCTAssertEqual(result.astronomy.astro.sunset, "09:14 PM")
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+
     func testError() async throws {
         do {
             dunapiMock.invokeError = true
             let result = try await dunapiMock.asyncRequest(endpoint: WeatherEndpoints.getCurrent, responseModel: WeatherErrorDetails.self)
             XCTAssertEqual(result.weatherError.errorCode, 2008)
             XCTAssertEqual(result.weatherError.errorDescription, "API KEY HAS BEEN DISABLED.")
-            XCTAssertEqual(result.localizedDescription, "South Africa")
+            XCTAssertEqual(result.localizedDescription, "The operation couldn’t be completed. (dunTests.WeatherErrorDetails error 1.)")
             
         } catch {
             print(error)

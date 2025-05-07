@@ -6,6 +6,8 @@
 //
 
 import XCTest
+import CloudKit
+import SwiftUICore
 
 final class dunUITests: XCTestCase {
 
@@ -14,7 +16,6 @@ final class dunUITests: XCTestCase {
 
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
         // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
     }
 
@@ -29,18 +30,27 @@ final class dunUITests: XCTestCase {
         app.launch()
 
         // Use XCTAssert and related functions to verify your tests produce the correct results.
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.name = "Launch Screen"
+        attachment.lifetime = .keepAlways
+        add(attachment)
     }
     
-    @MainActor
-    func testLoading() {
+    func testError() {
         // Given
-        let app = XCUIApplication()
-        app.launch()
+        @State var bool = true
+        @Environment(\.dismiss) var dismiss
         
         // When
-        app.buttons.element.tap()
+        let sut = ErrorView(isPresented: $bool,
+                            dismiss: _dismiss,
+                            errorTitle: "Error: Unit Tests",
+                            errorDescription: "Tesing Unit Tests")
         
         // Then
+        XCTAssertEqual(sut.isPresented, true)
+        XCTAssertEqual(sut.errorTitle, "Error: Unit Tests")
+        XCTAssertEqual(sut.errorDescription, "Tesing Unit Tests")
     }
 
     @MainActor

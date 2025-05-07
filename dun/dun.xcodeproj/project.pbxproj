@@ -67,14 +67,14 @@
 				Theme/Assets.xcassets,
 				Theme/TodoStrings.swift,
 				Views/ContentView/ContentViewModel.swift,
-				Views/HomeView/AddTodo/AddToDoView.swift,
-				Views/HomeView/TodoView.swift,
-				Views/HomeView/TodoViewModel.swift,
-				Views/HomeView/ViewComponents/TodoCardView.swift,
-				Views/HomeView/ViewComponents/ToDoHeaderView.swift,
-				Views/HomeView/ViewComponents/WeatherCardView.swift,
 				Views/SupportViews/ErrorView.swift,
 				Views/SupportViews/LoadingView.swift,
+				Views/TodoHomeView/AddTodo/AddToDoView.swift,
+				Views/TodoHomeView/TodoView.swift,
+				Views/TodoHomeView/TodoViewModel.swift,
+				Views/TodoHomeView/ViewComponents/TodoCardView.swift,
+				Views/TodoHomeView/ViewComponents/ToDoHeaderView.swift,
+				Views/TodoHomeView/ViewComponents/WeatherCardView.swift,
 			);
 			target = 2873ABF82DC5B51400F8504D /* dunUITests */;
 		};

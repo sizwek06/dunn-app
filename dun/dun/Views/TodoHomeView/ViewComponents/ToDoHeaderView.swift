@@ -20,7 +20,7 @@ extension TodoView {
                        height: UIScreen.main.bounds.height / 3,
                        alignment: .leading)
             if currentSection == .todo {
-                Image(systemName: "plus.square.on.square")
+                Image(systemName: "plus.circle.fill")
                     .resizable()
                     .foregroundColor(.accentColor)
                     .frame(width: 20, height: 20)

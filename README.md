@@ -1,4 +1,4 @@
-# dunn-app
+# dun-app
 The repository serves to host the To-Do List app which uses the iPhone's current location to retrieve the weather (and astronomy details) and the core data of previously manipulated data.
 
 Below is a quick guide to installation, happy/sad day scenarios and general information.

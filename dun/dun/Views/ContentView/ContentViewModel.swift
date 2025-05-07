@@ -36,7 +36,6 @@ class ContentViewModel: NSObject, ObservableObject {
     let locationManager: CLLocationManager!
     let apiClient: DunApiProtocol!
     
-    
     public init(apiClient: DunApiProtocol = DunApiClient(),
                 locationManager: CLLocationManager = CLLocationManager()) {
         
@@ -46,7 +45,7 @@ class ContentViewModel: NSObject, ObservableObject {
     
     func getAsyncWeather() async {
         
-        self.todoViewModel = TodoViewModel()
+        self.todoViewModel = TodoViewModel(apiClient: self.apiClient)
         
         guard let locationManager = locationManager.location else {
             self.errorCode = "Location not found.".uppercased()
@@ -94,7 +93,7 @@ class ContentViewModel: NSObject, ObservableObject {
         let endpoint = WeatherEndpoints.getAstronomy
         Task {
             do {
-                let astronomy = try await apiClient.asyncRequest(endpoint: endpoint, responseModel: WeatherSunResponseModel.self)
+                let astronomy = try await apiClient.asyncRequest(endpoint: endpoint, responseModel: WeatherAstronomyResponseModel.self)
                 
                 await MainActor.run {
                     self.todoViewModel?.sunSetTime = astronomy.astronomy.astro.sunset
